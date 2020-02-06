@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>Recursive Tracker</title>
+    <script type="text/javascript">
+      // Small polyfill for customElements
+      // Credit: https://medium.com/@WebReflection/extending-built-in-elements-9dce404b75b4
+      if (!this.customElements)
+        document.write(
+          '<script src="//unpkg.com/document-register-element"><\x2fscript>'
+        );
+    </script>
+    <script type="text/javascript">
+      if ('serviceWorker' in navigator) {
+        async function activateServiceWorker() {
+          window.removeEventListener('load', activateServiceWorker);
+          const worker = navigator.serviceWorker.register('/sw.js');
+          worker.then(
+            event => {
+              console.log('success:', event);
+            },
+            event => {
+              console.war('failed:', event);
+            }
+          );
+        }
+
+        window.addEventListener('load', activateServiceWorker);
+      }
+    </script>
+    <link type="text/css" rel="stylesheet" href="styles/app.css" />
+  </head>
+  <body>
+    <header
+      id="trackerAppHeader"
+      class="tracker-app__header"
+      role="banner"
+    ></header>
+    <div id="trackerAppBody" class="tracker-app__body"></div>
+    <script src="/src/browser/app.js" type="module"></script>
+  </body>
+</html>

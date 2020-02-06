@@ -1,0 +1,48 @@
+{
+  "name": "recursive-tracker",
+  "version": "0.0.0",
+  "description": "PWA for github repo project tracking",
+  "main": "index.html",
+  "bin": {
+    "recursive-tracker": "precache.js"
+  },
+  "scripts": {
+    "build": "node ./bin/precache.js",
+    "prepare": "snowpack --include './src/**/*.js'",
+    "start": "serve ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benja2729/recursive-tracker.git"
+  },
+  "keywords": [
+    "github",
+    "projects",
+    "pwa",
+    "customElements",
+    "snowpack",
+    "snowpackjs"
+  ],
+  "author": "Benjamin Fischer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/benja2729/recursive-tracker/issues"
+  },
+  "homepage": "https://github.com/benja2729/recursive-tracker#readme",
+  "devDependencies": {
+    "serve": "^11.3.0",
+    "snowpack": "^1.1.2"
+  },
+  "dependencies": {
+    "lit-html": "^1.1.2"
+  },
+  "snowpack": {
+    "webDependencies": [
+      "lit-html",
+      "lit-html/directives/until.js"
+    ],
+    "dedupe": [
+      "lit-html"
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+body,
+:host {
+  --spacing--xsm: 0.25rem;
+  --spacing--sm: 0.5rem;
+  --spacing--md: 1rem;
+  --spacing--lg: 2rem;
+  --spacing--xl: 4rem;
+  --spacing--xxl: 8rem;
+  --color--gray: 112, 128, 144;
+  --color--dark-gray: 47, 79, 79;
+  --color--green: 34, 139, 34;
+  --color--green: 65, 105, 225;
+  --color--primary: #009688;
+  --color--neutral-light: #eee;
+  --color--neutral: #ccc;
+  --color--neutral-dark: #aaa;
+  --color--text--neutral: #808080;
+}

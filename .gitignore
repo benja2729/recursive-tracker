@@ -1,0 +1,3 @@
+serve.sh
+/node_modules
+**/*.har
