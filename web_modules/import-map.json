@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "lit-html": "./lit-html.js",
+    "lit-html/directives/until": "./lit-html/directives/until.js"
+  }
+}

@@ -1,0 +1,41 @@
+@import url('./variables.css');
+
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 100%;
+  background: var(--color--neutral-light);
+  min-width: 1024px;
+}
+
+.tracker-app__header {
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+  border-bottom: 1px solid var(--color--neutral-dark);
+  padding: var(--spacing--md) var(--spacing--lg);
+  background-color: var(--color--primary);
+}
+
+.tracker-app__body {
+  padding: var(--spacing--lg);
+  overflow: auto;
+}
+
+.g-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: var(--spacing--md);
+}
+
+.g-card__error {
+  --g-card--header-background: #cd5c5c;
+  --g-card--border-color: #cd5c5c;
+  grid-column-end: span 2;
+  cursor: pointer;
+}
