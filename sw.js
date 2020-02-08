@@ -1,8 +1,10 @@
 const PRECACHE_VERSION = 'recursive-tracker--precache-v0.0.0';
 const RUNTIME_VERSION = 'recursive-tracker--runtime-v0.0.0';
+const NAMESPACE = self.location.pathname.replace(/[^\/]+$/, '');
 const PRECACHE_URLS = [
   '/',
   '/index.html',
+  '/assets/offline.json',
   '/web_modules/lit-html.js',
   '/src/packages/templating.js',
   '/src/packages/Component.js',
@@ -12,7 +14,10 @@ const PRECACHE_URLS = [
   '/src/browser/components/g-card.js',
   '/src/workers/MessageTarget.js',
   '/src/workers/store-worker.js'
-];
+].map(
+  path => `/${NAMESPACE}/${path}`
+    .replace(/\/{2,}/g, '/')
+);
 
 const log = (...args) => console.log('[ServiceWorker]', ...args);
 
@@ -46,42 +51,33 @@ async function findInCache(event, callback) {
   let response = await caches.match(event.request);
 
   if (response) {
-    log(`Found ${event.url} in cache`);
+    log(`Found ${event.request.url} in cache`);
     return response;
   }
 
-  if (typeof callback === 'function') {
-    const cache = await caches.open(RUNTIME_VERSION);
-    response = await callback(cache, event.request);
+  if (
+    typeof callback === 'function' &&
+    event.request.method.toUpperCase() === 'GET'
+  ) {
+    try {
+      const cache = await caches.open(RUNTIME_VERSION);
+      response = await callback(cache, event.request);
 
-    if (response && response.ok) {
-      log(`caching response for ${event.request.url}`);
-      await cache.put(event.request, response.clone());
-      return response;
+      if (response && response.ok) {
+        log(`caching response for ${event.request.url}`);
+        await cache.put(event.request, response.clone());
+        return response;
+      }
+    } catch (error) {
+      log(`offline: ${error}`);
+      const offline = PRECACHE_URLS.find(url => url.includes('offline'));
+      const precache = await caches.open(PRECACHE_VERSION);
+      return precache.match(offline);
     }
   }
 
   log(`defaulting to a regular fetch for ${event.request.url}`);
   return fetch(event.request);
-}
-
-/**
- * @param {Request} request
- */
-async function fetchOnNetwork(request) {
-  try {
-    log(`Fetching ${request.url} from network`);
-    const response = await fetch(request);
-
-    if (!response.ok) {
-      log(`Responded with status:`, response.status);
-    }
-
-    return response;
-  } catch (error) {
-    log('Implement offline response');
-    throw error;
-  }
 }
 
 self.addEventListener('install', event => {
@@ -102,7 +98,7 @@ self.addEventListener('fetch', async event => {
 
   const responsePromise = findInCache(event, () => {
     if (matchRequest(request, 'jsonplaceholder')) {
-      return fetchOnNetwork(request);
+      return fetch(request);
     }
   });
 

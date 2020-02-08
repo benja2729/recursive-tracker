@@ -1,0 +1,9 @@
+{
+  "type": "OFFLINE_ERROR",
+  "payload": "Tried to fetch an uncached resource while offline",
+  "meta": {
+    "status": 520,
+    "statusText": "offline"
+  },
+  "error": true
+}

@@ -4,9 +4,7 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <title>Recursive Tracker</title>
-    <script type="text/javascript">
-      document.write(`<base href="${location.pathname}" />`);
-    </script>
+
     <script type="text/javascript">
       // Small polyfill for customElements
       // Credit: https://medium.com/@WebReflection/extending-built-in-elements-9dce404b75b4
@@ -15,24 +13,30 @@
           '<script src="//unpkg.com/document-register-element"><\x2fscript>'
         );
     </script>
+
     <script type="text/javascript">
       if ('serviceWorker' in navigator) {
-        async function activateServiceWorker() {
-          window.removeEventListener('load', activateServiceWorker);
-          const worker = navigator.serviceWorker.register('/sw.js');
+        async function installServiceWorker() {
+          window.removeEventListener('load', installServiceWorker);
+          const worker = navigator.serviceWorker.register('sw.js');
           worker.then(
             event => {
               console.log('success:', event);
             },
             event => {
-              console.war('failed:', event);
+              console.warn('failed:', event);
             }
           );
         }
 
-        window.addEventListener('load', activateServiceWorker);
+        const { controller } = navigator.serviceWorker;
+
+        if (!controller) {
+          window.addEventListener('load', installServiceWorker);
+        }
       }
     </script>
+
     <link type="text/css" rel="stylesheet" href="styles/app.css" />
   </head>
   <body>
@@ -42,6 +46,6 @@
       role="banner"
     ></header>
     <div id="trackerAppBody" class="tracker-app__body"></div>
-    <script src="/src/browser/app.js" type="module"></script>
+    <script src="src/browser/app.js" type="module"></script>
   </body>
 </html>
