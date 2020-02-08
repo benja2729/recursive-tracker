@@ -1,4 +1,6 @@
 function MessageAction(action, handler) {
+  const fsaProps = new Set(['type', 'payload', 'meta', 'error']);
+  const isFsa = action => Object.keys(action).every(key => fsaProps.has(key));
   return new Promise(resolve => {
     let responded = false;
     const { type, meta = {} } = action;
@@ -6,7 +8,7 @@ function MessageAction(action, handler) {
       rejectWith(`Time out responding to ${type}`);
     }, MessageAction.TIMEOUT);
 
-    const respondWith = (payload, metadata = {}, error = false) => {
+    const respondWith = (type, payload, metadata = {}, error = false) => {
       if (responded) {
         throw new Error(`[WorkerAction] Already responded to action '${type}'`);
       }
@@ -34,7 +36,12 @@ function MessageAction(action, handler) {
      * @param {object} [meta]
      */
     const resolveWith = (payload, meta) => {
-      respondWith(payload, meta);
+      if (isFsa(payload)) {
+        const { type, payload, meta, error } = payload;
+        respondWith(type, payload, meta, error);
+      } else {
+        respondWith(type, payload, meta);
+      }
     };
 
     /**
@@ -42,14 +49,21 @@ function MessageAction(action, handler) {
      * @param {object} [meta]
      */
     const rejectWith = (errorMessage, meta) => {
-      const payload = new Error(errorMessage);
-      respondWith(payload, meta, true);
+      const cast = message => typeof message === 'string' ?
+          new Error(message) :
+          message
+      if (isFsa(errorMessage)) {
+        const { type, payload, meta, error } = errorMessage;
+        respondWith(type, cast(payload), meta, error);
+      } else {
+        respondWith(type, cast(errorMessage), meta, true);
+      }
     };
 
     try {
       handler({ action, resolveWith, rejectWith });
     } catch (error) {
-      respondWith(error, undefined, true);
+      rejectWith(error);
     }
   });
 }

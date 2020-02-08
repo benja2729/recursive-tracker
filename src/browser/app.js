@@ -34,6 +34,7 @@ function dispatchAction(type, payload, meta, error = false) {
 
   worker.postMessage(action);
 }
+window.workerDispatchAction = dispatchAction;
 
 const HEADER = html`
   <button
