@@ -9,7 +9,7 @@ let STATE = {
   error: null
 };
 
-const worker = new Worker('/src/workers/store-worker.js');
+const worker = new Worker('src/workers/store-worker.js');
 
 function renderApp(state) {
   render(HEADER, document.getElementById('trackerAppHeader'));
